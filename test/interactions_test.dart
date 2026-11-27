@@ -146,6 +146,31 @@ void main() {
       expect(find.text('Mark all read'), findsNothing);
     });
 
+    testWidgets('a new PIN is typed into hidden slots, twice', (tester) async {
+      await pumpApp(tester, size: phoneSize);
+      showChangePinFlow(appContext(tester), sessionOf(tester).cards.first);
+      await settle(tester, frames: 20);
+      final slots = find.byType(EditableText);
+      expect(slots, findsNWidgets(4));
+      // An obscured slot sets its character in a transparent colour and
+      // draws a dot over it.
+      for (final slot in tester.widgetList<EditableText>(slots)) {
+        expect(slot.style.color?.a, 0);
+      }
+      Future<void> type(String pin) async {
+        for (var i = 0; i < 4; i++) {
+          await tester.enterText(find.byType(EditableText).at(i), pin[i]);
+          await tester.pump();
+        }
+        await settle(tester, frames: 10);
+      }
+
+      await type('2580');
+      expect(find.text('Type it again'), findsOneWidget);
+      await type('2580');
+      expect(find.text('PIN changed'), findsOneWidget);
+    });
+
     testWidgets('the exchange panel on a desktop exchanges', (tester) async {
       await pumpApp(tester, size: desktopSize);
       await goTo(tester, Destination.payments);

@@ -1277,6 +1277,26 @@ class _PinFlow extends StatefulWidget {
 }
 
 class _PinFlowState extends State<_PinFlow> {
+  /// The first slot's focus: the flow opens on it, and moves back to it
+  /// for the second entry, which is a field of its own.
+  final _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusFirstSlot();
+  }
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _focusFirstSlot() => WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (mounted) _focus.requestFocus();
+  });
+
   String? _first;
   var _mismatch = false;
   var _done = false;
@@ -1305,6 +1325,8 @@ class _PinFlowState extends State<_PinFlow> {
           child: OtpField(
             key: ValueKey(_attempt),
             maxLength: 4,
+            // A PIN is never shown: each slot fills with a dot.
+            obscureText: true,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onCompleted: (value) {
@@ -1314,6 +1336,7 @@ class _PinFlowState extends State<_PinFlow> {
                   _attempt++;
                   _mismatch = false;
                 });
+                _focusFirstSlot();
               } else if (value == _first) {
                 Haptics.impact(context, HapticImpact.medium);
                 setState(() => _done = true);
@@ -1323,15 +1346,16 @@ class _PinFlowState extends State<_PinFlow> {
                   _attempt++;
                   _mismatch = true;
                 });
+                _focusFirstSlot();
               }
             },
-            children: const [
+            children: [
               OtpFieldGroup(
                 children: [
-                  OtpFieldSlot(),
-                  OtpFieldSlot(),
-                  OtpFieldSlot(),
-                  OtpFieldSlot(),
+                  OtpFieldSlot(focusNode: _focus),
+                  const OtpFieldSlot(),
+                  const OtpFieldSlot(),
+                  const OtpFieldSlot(),
                 ],
               ),
             ],

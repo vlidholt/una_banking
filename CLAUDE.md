@@ -55,7 +55,8 @@ are the sibling apps whose setup this one copies.
   when the card is frozen (desaturation through a colour matrix and a
   veil).
 - `widgets/keypad.dart`: `AmountInput` and `AmountEntry`, the big amount
-  and the keypad, which also takes the keyboard's digits.
+  and the keypad, which also takes the keyboard's digits. The PIN change
+  is an `OtpField(obscureText: true)`.
 
 ## Rules the screens follow
 
