@@ -3,9 +3,9 @@
     "short_name": "Una Banking",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#16131A",
-    "theme_color": "#16131A",
-    "description": "Una Banking, a fictional money app built with the una Flutter package.",
+    "background_color": "#1D181E",
+    "theme_color": "#1D181E",
+    "description": "Una Banking is a fictional money app: accounts in five currencies, cards you can freeze and reveal, payments between friends, exchange, analytics and savings vaults. It is a demo built entirely with una, a Flutter UI package.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
