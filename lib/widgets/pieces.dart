@@ -111,7 +111,7 @@ class TxnAvatar extends StatelessWidget {
         if (photo != null) {
           return ClipRSuperellipse(
             borderRadius: BorderRadius.circular(size * .3),
-            child: Image.asset(
+            child: RevealImage.asset(
               photo,
               width: size,
               height: size,

@@ -70,6 +70,10 @@ are the sibling apps whose setup this one copies.
   builder nested inside it, or it asserts that it found none.
 - Nothing is a dead end: a control with nowhere to go answers with a toast
   (`showDemoToast`).
+- **Photographs are `RevealImage`s** (the vaults' photos, wherever they
+  show). The shell precaches the portraits and every vault photo when it
+  first builds, so Home and a vault's page open with their pictures. The
+  cards are painted in code and have no pictures to load.
 
 ## Tests
 

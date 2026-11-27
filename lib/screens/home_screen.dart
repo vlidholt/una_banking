@@ -659,7 +659,7 @@ class _VaultsList extends StatelessWidget {
           ListTile(
             leading: ClipRSuperellipse(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
+              child: RevealImage.asset(
                 vault.photo,
                 width: 40,
                 height: 40,
@@ -741,7 +741,7 @@ class VaultCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(vault.photo, fit: BoxFit.cover),
+                  RevealImage.asset(vault.photo, fit: BoxFit.cover),
                   if (vault.roundUps)
                     PositionedDirectional(
                       top: 8,

@@ -41,7 +41,7 @@ class VaultScreen extends StatelessWidget {
                 expandedHeight: 240,
                 // In line with the page under it on a wide window.
                 maxWidth: 760,
-                background: Image.asset(vault.photo, fit: BoxFit.cover),
+                background: RevealImage.asset(vault.photo, fit: BoxFit.cover),
               ),
               SliverToBoxAdapter(
                 child: PageContainer(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_solidart/flutter_solidart.dart';
 import 'package:una/una.dart';
@@ -40,12 +42,13 @@ class _BankShellState extends State<BankShell> {
     if (_precached) return;
     _precached = true;
     // Portraits and vault photos are on the first screens: decode them up
-    // front, so Home opens with its pictures rather than filling them in.
+    // front, so Home opens with its pictures rather than revealing them, and
+    // a vault's page opens on its photograph.
     for (final person in [People.me, ...People.contacts]) {
-      precacheImage(AssetImage(person.photo), context);
+      unawaited(RevealImage.precache(context, AssetImage(person.photo)));
     }
     for (final vault in vaultSeeds) {
-      precacheImage(AssetImage(vault.photo), context);
+      unawaited(RevealImage.precache(context, AssetImage(vault.photo)));
     }
   }
 
