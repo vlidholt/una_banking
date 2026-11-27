@@ -82,6 +82,8 @@ final _darkScheme = ColorScheme.fromSeed(
 ThemeData themeFor(Brightness brightness, LiquidGlassMode mode) =>
     _themes[(brightness, mode)] ??= ThemeData(
       colorScheme: brightness == Brightness.dark ? _darkScheme : _lightScheme,
+      // Charts in the brand's coral family rather than una's default green.
+      chartPalette: ChartPalette.orange,
       textTheme: appTextTheme,
       liquidGlass: mode == LiquidGlassMode.auto
           ? null
