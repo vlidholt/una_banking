@@ -83,8 +83,17 @@ are the sibling apps whose setup this one copies.
 
 ## Screenshots
 
-`docs/desktop.png` is headless Chrome at 1200 × 750 on a local build
-(`--headless=new --virtual-time-budget=90000
---run-all-compositor-stages-before-draw`); headless Chrome will not lay
-out narrower than about 500, so `docs/phone.jpg` is the phone layout at
-500 × 1000 (`?tab=cards`), scaled down.
+`tool/screenshot.py URL OUT WIDTH HEIGHT SCALE WAIT` drives headless Chrome
+over the DevTools protocol (needs `pip install websocket-client`) and
+waits in *real* time before it captures. `--screenshot` with
+`--virtual-time-budget` does not do: virtual time leaves charts at the
+first frame of their entrance and portraits behind `Avatar`'s fade, and
+headless Chrome will not lay a window out narrower than about 500. On a
+local build (`python3 -m http.server --directory build/web`):
+
+```bash
+python3 tool/screenshot.py http://localhost:8793/ docs/desktop.png 1200 750 1 12
+python3 tool/screenshot.py "http://localhost:8793/?tab=cards" /tmp/phone.png 390 844 2 12
+```
+
+and `docs/phone.jpg` is the second saved as a JPEG.

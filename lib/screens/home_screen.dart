@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 import 'package:una/una.dart';
 import 'package:una_banking/data.dart';
@@ -414,14 +416,31 @@ class SpendingInsight extends StatelessWidget {
     final scheme = theme.colorScheme;
     final session = context.bank;
     final spent = session.spentIn(today);
+    final daily = _cumulativeByDay(session);
+    final lastDaily = _lastMonthByDay();
     // Last month by the same day, so the comparison is fair mid-month.
-    final last = pastMonthsSpent.last * today.day / 30;
+    final last = lastDaily.last;
     final change = last == 0 ? 0.0 : (spent - last) / last * 100;
+    final lastMonth = DateFormat.MMMM().format(
+      DateTime(today.year, today.month - 1),
+    );
+    final hidden = session.hideBalances;
+    final series = [
+      ChartSeries(
+        label: DateFormat.MMMM().format(today),
+        values: daily,
+        color: scheme.tint,
+      ),
+      ChartSeries(
+        label: '$lastMonth, same days',
+        values: lastDaily,
+        color: scheme.mutedForeground.withValues(alpha: .7),
+      ),
+    ];
     final top = session
         .spendingByCategory(today)
         .where((entry) => !TxnCategory.fixed.contains(entry.$1))
         .firstOrNull;
-    final daily = _cumulativeByDay(session);
     return Card(
       onTap: () => context.goTo(Destination.analytics),
       semanticLabel: 'Spending this month',
@@ -459,14 +478,29 @@ class SpendingInsight extends StatelessWidget {
           ),
           const Gap.md(),
           SizedBox(
-            height: 64,
-            child: Sparkline(
-              values: daily,
-              color: scheme.tint,
-              valueFormatter: (value) => money(value, Currency.eur),
-              semanticLabel: 'Spending through the month',
+            height: 132,
+            child: LineChart(
+              labels: [
+                for (var day = 1; day <= daily.length; day++)
+                  DateFormat.MMMd().format(
+                    DateTime(today.year, today.month, day),
+                  ),
+              ],
+              series: series,
+              // Rent lands on the 1st, so both lines start high: fitting
+              // the range to them keeps the chart from being mostly air.
+              minValue: math.min(daily.first, lastDaily.first) * .9,
+              maxValue: math.max(daily.last, lastDaily.last) * 1.04,
+              showGrid: false,
+              showYAxis: false,
+              showXAxis: false,
+              valueFormatter: (value) =>
+                  hidden ? '€••••' : money(value, Currency.eur, decimals: 0),
+              semanticLabel: 'Spending through the month against last month',
             ),
           ),
+          const Gap.sm(),
+          ChartLegend(entries: series, alignment: WrapAlignment.start),
           if (top != null) ...[
             const Gap.md(),
             Row(
@@ -500,6 +534,24 @@ class SpendingInsight extends StatelessWidget {
     );
   }
 
+  /// What last month had cost by each day of it up to today's: the rent
+  /// on the 1st, the rest of [pastMonthsSpent]'s last month spread over
+  /// the days with a little of a real month's unevenness.
+  static List<double> _lastMonthByDay() {
+    final lastDays = DateTime(today.year, today.month, 0).day;
+    const rent = 1250.0;
+    final rest = pastMonthsSpent.last - rent;
+    final days = today.day < 2 ? 2 : today.day;
+    return [
+      for (var day = 1; day <= days; day++)
+        () {
+          final t = (day / lastDays).clamp(0, 1).toDouble();
+          final wobble = .02 * math.sin(day * 1.7) + .015 * math.sin(day * .6);
+          return rent + rest * (t + wobble * t).clamp(0, 1);
+        }(),
+    ];
+  }
+
   /// What the month has cost so far, day by day.
   static List<double> _cumulativeByDay(BankSession session) {
     final days = List<double>.filled(today.day, 0);
@@ -515,6 +567,7 @@ class SpendingInsight extends StatelessWidget {
     }
     var sum = 0.0;
     final out = [for (final day in days) sum += day];
+    // A line needs two points: on the 1st, the day starts from nothing.
     return out.length < 2 ? [0, ...out] : out;
   }
 }

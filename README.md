@@ -8,7 +8,7 @@ vaults — built entirely from the widgets of
 **Try it:** <https://vlidholt.github.io/una_banking/>
 
 <p>
-  <img src="docs/desktop.png" alt="Una Banking on a desktop: the total balance over a coral gradient, the latest transactions, cards, this month's spending and savings vaults" width="72%">
+  <img src="docs/desktop.png" alt="Una Banking on a desktop: the total balance over a coral gradient, the latest transactions, cards, this month's spending charted against last month's, and savings vaults" width="72%">
   <img src="docs/phone.jpg" alt="Una Banking on a phone: the everyday card in coral, with freeze, details, PIN and wallet actions and its monthly limit" width="24%">
 </p>
 
@@ -24,8 +24,8 @@ light.
 
 - **Home** — everything you hold, then each account in its currency,
   swiped through on the balance; Add money, Send, Exchange and More; the
-  latest transactions; this month's spending against last month's; cards
-  and savings vaults.
+  latest transactions; this month's spending charted day by day against
+  last month's to the same day; cards and savings vaults.
 - **Cards** — physical, metal, virtual and single-use cards drawn in code,
   each with its own design and the app's own (fictional) network. Freeze
   one and it frosts over; show its number, expiry and security code and
