@@ -1,10 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/widgets.dart';
 import 'package:una/una.dart';
 
-/// The Una Banking mark — a coin dropping into a "u", on a tile in the
-/// brand's coral-to-plum gradient — and the wordmark beside it.
+/// The Una Banking mark — a "B" made of two "u"s on their side, on a tile
+/// in the brand's coral-to-plum gradient — and the wordmark beside it.
 ///
 /// The same painter draws the web app's icons (see
 /// `test/app_icons_test.dart`).
@@ -142,8 +140,10 @@ class BankMarkPainter extends CustomPainter {
       )
       ..restore();
 
-    // On a 24-unit grid: a "u" drawn as one thick stroke, and a coin above
-    // its mouth, about to drop in.
+    // On a 24-unit grid: a "B" whose bowls are two "u"s laid on their side,
+    // opening to the left and stacked, against a softer stem. The two "u"s
+    // are one stroked path, so their shared middle bar is one shape. Every
+    // edge is on a multiple of .75, a whole pixel in the 32-pixel favicon.
     final art = side * (1 - inset * 2);
     final unit = art / 24;
     canvas
@@ -151,27 +151,29 @@ class BankMarkPainter extends CustomPainter {
       ..translate(side * inset, side * inset)
       ..scale(unit);
     const white = Color(0xFFFFFFFF);
-    final stroke = Paint()
-      ..color = white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.1
-      ..strokeCap = StrokeCap.round;
-    final u = Path()
-      ..moveTo(6.6, 9.6)
-      ..lineTo(6.6, 13.4)
-      ..arcTo(
-        Rect.fromCircle(center: const Offset(12, 13.4), radius: 5.4),
-        math.pi,
-        -math.pi,
-        false,
-      )
-      ..lineTo(17.4, 9.6);
+    const stroke = 3.0;
+    const stem = Rect.fromLTRB(6, 4.5, 6 + stroke, 19.5);
+    Path u(double top, double bottom, double right) {
+      final r = (bottom - top) / 2;
+      return Path()
+        ..moveTo(stem.right, top)
+        ..lineTo(right - r, top)
+        ..arcToPoint(Offset(right - r, bottom), radius: Radius.circular(r))
+        ..lineTo(stem.right, bottom);
+    }
+
+    // Centre lines: the outer edges reach 17.25 and 18 to the right, the
+    // lower bowl a little fuller, as a B's is.
+    final bowls = u(6, 12, 15.75)..addPath(u(12, 18, 16.5), Offset.zero);
     canvas
-      ..drawPath(u, stroke)
-      ..drawCircle(
-        const Offset(12, 7.2),
-        2.5,
-        Paint()..color = white.withValues(alpha: .9),
+      ..drawRect(stem, Paint()..color = white.withValues(alpha: .62))
+      ..drawPath(
+        bowls,
+        Paint()
+          ..color = white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = stroke
+          ..strokeJoin = StrokeJoin.round,
       )
       ..restore();
   }
